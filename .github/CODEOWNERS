@@ -1,0 +1,9 @@
+# Default owner
+*                           @alisson92
+
+# Sensitive/architecture-defining areas
+/docs/architecture/         @alisson92
+/CLAUDE.md                  @alisson92
+/terraform/                 @alisson92
+/gitops/                    @alisson92
+/policies/                  @alisson92
