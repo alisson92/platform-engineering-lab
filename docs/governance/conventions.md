@@ -38,3 +38,14 @@ Two independent schemes, intentionally decoupled:
 ## Required checks — current gap
 
 No CI exists yet in either repository. Branch protection on `main` therefore has an empty required-status-checks list for now. Each check listed in section 16.3 of the architecture document is added to branch protection only when it is actually implemented and evaluated (EP03 for Terraform checks, EP04 for Helm/GitOps checks, EP11 for the worker's build/security pipeline). This matches the "Enforcement" section of `CLAUDE.md`: no tool is wired in before an explicit, evaluated decision to adopt it.
+
+## Solo-owner exception to review requirements
+
+Section 16.2 of the architecture document calls for "at least one approval, even though the lab uses a single person." In practice, GitHub does not allow a pull request author to approve their own pull request, and applies the same restriction to required reviewers on deployment environments. With a single GitHub account (`@alisson92`) acting as author, owner and only code owner in both repositories, a required-approval count of 1 makes every pull request permanently unmergeable, and a required environment reviewer makes every deployment permanently unapprovable.
+
+Adopted exception, applied to both repositories:
+
+- Branch protection on `main` keeps `enforce_admins=true`, `required_conversation_resolution=true`, and disallows force pushes and branch deletion, but sets `required_pull_request_reviews.required_approving_review_count=0` and `require_code_owner_reviews=false`. A pull request is still mandatory to reach `main` (no direct push is possible), which satisfies the literal EP00 acceptance criterion; only the independent-approval step is dropped, because no independent reviewer exists.
+- GitHub environments `apply` and `destroy` (in `platform-engineering-lab`) carry no required reviewers, only `deployment_branch_policy.protected_branches=true`, restricting deployments to the protected `main` branch.
+
+If a second collaborator or a bot account with review rights is added to the project, this exception should be revisited and the approval requirement restored, per the change process in section 32 of the architecture document.
